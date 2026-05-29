@@ -29,24 +29,24 @@ class SimpleTokenizer:
             for word in text.lower().split()
         )
 
-        all_tokens = [
+        vocab_with_tag = [
             self.pad_token,
             self.unk_token,
             self.bos_token,
             self.eos_token
         ] + sorted(vocab)
 
-
         self.word_to_id = {
-            word: idx for idx, word in enumerate(all_tokens)
+            word: idx
+            for idx, word in enumerate(vocab_with_tag)
         }
 
-        # ID -> Word
         self.id_to_word = {
-            idx: word for word, idx in self.word_to_id.items()
+            idx: word
+            for idx, word in enumerate(vocab_with_tag)
         }
 
-        self.vocab_size = len(all_tokens)
+        self.vocab_size = len(vocab_with_tag)
     
     def encode(self, text: str) -> List[int]:
         """
@@ -56,12 +56,15 @@ class SimpleTokenizer:
 
         words = text.lower().split()
 
-        ids = [
-            self.word_to_id.get(word, self.word_to_id[self.unk_token])
+        idxs = [
+            self.word_to_id.get(
+                word,
+                self.word_to_id[self.unk_token]
+            )
             for word in words
         ]
 
-        return ids
+        return idxs
     
     def decode(self, ids: List[int]) -> str:
         """
@@ -69,8 +72,8 @@ class SimpleTokenizer:
         """
 
         words = [
-            self.id_to_word.get(idx, self.unk_token)
-            for idx in ids
+            self.id_to_word.get(id, self.unk_token)
+            for id in ids
         ]
 
         return " ".join(words)
